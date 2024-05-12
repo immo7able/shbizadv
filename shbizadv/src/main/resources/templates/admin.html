@@ -1,0 +1,122 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<title>Bizarre Adventure</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="keywords" content="Movie_store Responsive web template, Bootstrap Web Templates, Flat Web Templates, Andriod Compatible web template, 
+Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, SonyErricsson, Motorola web design" />
+<script type="application/x-javascript"> addEventListener("load", function() { setTimeout(hideURLbar, 0); }, false); function hideURLbar(){ window.scrollTo(0,1); } </script>
+<link href="css/bootstrap.css" rel='stylesheet' type='text/css' />
+<link href="css/style.css" rel="stylesheet" type="text/css" media="all" />
+<script type="text/javascript" src="js/jquery-1.11.1.min.js"></script>
+<link href='http://fonts.googleapis.com/css?family=Roboto+Condensed:100,200,300,400,500,600,700,800,900' rel='stylesheet' type='text/css'>
+</head>
+<body>
+    <header th:insert="~{blocks/header :: header}"></header>
+	  <div class="">
+        <section class="profile">
+            <div class="avatar">
+              <img src="images/pic11.jpg" alt="Аватар пользователя">
+            </div>
+            <div class="info">
+              <h2>?</h2>
+              <p>Уровень ∞ | Ранг админ</p>
+            </div>
+            <div class="stats">
+              <ul>
+                <li>
+                  <a href="#">Списки</a>
+                </li>
+                <li>
+                  <a href="#">Комментарии</a>
+                </li>
+              </ul>
+            </div>
+          </section>
+	<div class="manga-list">
+        <div class="container1">
+            <div class="row1">
+              <div class="col-md-61">
+	            <div class="container_wrap">
+	                 <div>
+                         <form  action="" method="post" enctype="multipart/form-data" class="form-signup">
+                             <div class="text-center" style="color:green" th:if="${message}" th:text="${message}"></div>
+                            <h2 class="text-center">Добавление Аниме</h2>
+                        <div>
+                            <label for="name">Название:</label>
+                            <input type="text" name="name" id="name" class="form-control input-field">
+                            <span th:if="${errors}" th:text="${errors[name]}" class="error"> </span>
+                        </div>
+                        <div>
+                            <label for="seriescount">Количество серий:</label>
+                            <input type="number" name="seriescount" id="seriescount" value="0" class="form-control input-field">
+                            <span th:if="${errors}" th:text="${errors[seriescount]}" class="error"> </span>
+                        </div>
+                        <div>
+                            <label for="status">Статус:</label>
+                            <select name="status" id="status" class="form-control input-field">
+                                <option value="announcement">Анонс</option>
+                                <option value="ongoing">Онгоинг</option>
+                                <option value="completed">Завершен</option>
+                            </select>
+                            <span th:if="${errors}" th:text="${errors[status]}" class="error"> </span>
+                        </div>
+                        <div>
+                            <label for="studio">Студио:</label>
+                            <input type="text" name="studio" id="studio" class="form-control input-field">
+                            <span th:if="${errors}" th:text="${errors[studio]}" class="error"> </span>
+                        </div>
+                        <div>
+                            <label for="typeofanime">Тип аниме:</label>
+                            <select name="typeofanime" id="typeofanime" class="form-control input-field">
+                                <option value="series">Сериал</option>
+                                <option value="movie">Фильм</option>
+                                <option value="ova">OVA</option>
+                                <option value="ona">ONA</option>
+                                <option value="special">Спэшл</option>
+                            </select>
+                            <span th:if="${errors}" th:text="${errors[typeofanime]}" class="error"> </span>
+                        </div>
+                        <div>
+                            <label for="sourceofanime">Источник :</label>
+                            <input type="text" name="sourceofanime" id="sourceofanime" class="form-control input-field">
+                            <span th:if="${errors}" th:text="${errors[sourceofanime]}" class="error"> </span>
+                        </div>
+                        <div>
+                            <label for="avatar">Avatar:</label>
+                            <input type="file" name="avatar" id="avatar" accept="image/*">
+                            <span th:if="${errors}" th:text="${errors[avatar]}" class="error"> </span>
+                        </div>
+                        <div>
+                            <label for="background">Background:</label>
+                            <input type="file" id="background" name="background" accept="image/*">
+                            <span th:if="${errors}" th:text="${errors[background]}" class="error"> </span>
+                        </div>
+                            <input type="submit" value="Добавление">
+                        </form>
+		            </div>
+                </div>
+            </div>
+            <div class="col-md-61">
+                <div class="container_wrap">
+                    <div>
+                        <form action="genre" method="post" class="form-signup">
+                            <div class="text-center" style="color:green" th:if="${messagegenre}" th:text="${messagegenre}"></div>
+                            <h2 class="text-center">Добавление Жанров</h2>
+                            <div>
+                                <label for="name">Название жанра</label>
+                                <input type="text" name="name" id="name_id" class="form-control input-field">
+                                <input type="submit" value="Добавление">
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<footer th:insert="~{blocks/footer :: footer}">
+ </footer>		
+</body>
+</html>

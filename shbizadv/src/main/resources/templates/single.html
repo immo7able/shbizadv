@@ -1,0 +1,212 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+  <title>Bizarre Adventure</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="keywords">
+  <script type="application/x-javascript"> addEventListener("load", function() { setTimeout(hideURLbar, 0); }, false); function hideURLbar(){ window.scrollTo(0,1); } </script>
+  <link href="/css/bootstrap.css" rel='stylesheet' type='text/css' />
+  <link href="/css/style.css" rel="stylesheet" type="text/css" media="all" />
+
+  <!-- start plugins -->
+  <script th:inline="javascript">
+    /* <![CDATA[ */
+    function changeVideoSrc(button) {
+      var videoSrc = button.getAttribute('data-video');
+      var videoPlayer = document.getElementById('videoPlayer');
+      var source = videoPlayer.getElementsByTagName('source')[0];
+      source.src = videoSrc;
+      videoPlayer.load();
+      videoPlayer.play();
+    }
+    /* ]]> */
+  </script>
+  <script>
+
+    function previous() {
+      let sourceElement = document.querySelector('#videoPlayer source');
+      let srcValue = sourceElement.getAttribute('src');
+      let parts = srcValue.split('/');
+      let filename = parts[parts.length - 1];
+      let number = parseInt(filename.split('.')[0]);
+      let nextNumber = number - 1;
+      let buttonNumber = "button" + nextNumber;
+      let nextButton = document.getElementById(buttonNumber);
+      if (nextButton) {
+        nextButton.click();
+      }
+    }
+
+    function next() {
+      let sourceElement = document.querySelector('#videoPlayer source');
+      let srcValue = sourceElement.getAttribute('src');
+      let parts = srcValue.split('/');
+      let filename = parts[parts.length - 1];
+      let number = parseInt(filename.split('.')[0]);
+      let nextNumber = number + 1;
+      let buttonNumber = "button" + nextNumber;
+      let nextButton = document.getElementById(buttonNumber);
+      if (nextButton) {
+        nextButton.click();
+      }
+    }
+  </script>
+  <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
+  <link href='http://fonts.googleapis.com/css?family=Roboto+Condensed:100,200,300,400,500,600,700,800,900' rel='stylesheet' type='text/css'>
+</head>
+<body th:style="'background-image: url(/uploads/' + ${anime.background} + ')'">
+<div class="container">
+  <div class="container_wrap">
+    <header th:insert="~{blocks/header :: header}"></header>
+    <div class="content">
+      <div class="movie_top">
+        <div class="col-md-9 movie_box">
+          <div class="grid images_3_of_2">
+            <div class="movie_image">
+              <span class="movie_rating" th:text="${#numbers.formatDecimal(anime.rating, 1, 2)}">5.0</span>
+              <img th:src="@{${'/uploads/' + anime.avatar}}" class="img-responsive" alt=""/>
+            </div>
+            <div class="movie_rate">
+              <div class="rating_desc"><p>Your Vote :</p></div>
+              <form th:if="${user}" action="/anime/rating" method="post" class="sky-form">
+                <fieldset>
+                  <section>
+                    <div class="rating">
+                      <input type="radio" name="rating" id="stars-rating-5" value="5">
+                      <label for="stars-rating-5"><i class="icon-star"></i></label>
+                      <input type="radio" name="rating" id="stars-rating-4" value="4">
+                      <label for="stars-rating-4"><i class="icon-star"></i></label>
+                      <input type="radio" name="rating" id="stars-rating-3" value="3">
+                      <label for="stars-rating-3"><i class="icon-star"></i></label>
+                      <input type="radio" name="rating" id="stars-rating-2" value="2">
+                      <label for="stars-rating-2"><i class="icon-star"></i></label>
+                      <input type="radio" name="rating" id="stars-rating-1" value="1">
+                      <label for="stars-rating-1"><i class="icon-star"></i></label>
+                    </div>
+                    <input type="hidden" name="animeId" th:value="${anime.anime_id}">
+                    <input type="hidden" name="userId" th:value="${user.user_id}">
+                    <button class="redBtn" type="submit">Rate</button>
+                  </section>
+                </fieldset>
+              </form>
+              <div class="clearfix"> </div>
+            </div>
+          </div>
+
+<div class="desc1 span_3_of_2">
+            <p class="movie_option"><strong>Название: </strong><a th:text="${anime.name}" href="#"></a></p>
+            <p class="movie_option"><strong>Количество серий: </strong><span th:text="${anime.seriesCount}"></span></p>
+            <p class="movie_option"><strong>Статус: </strong><a th:text="${anime.status}" href="#"></a></p>
+            <p class="movie_option"><strong>Студия: </strong><span th:text="${anime.studio}"></span></p>
+            <p class="movie_option"><strong>Тип: </strong><a th:text="${anime.typeOfAnime}" href="#"></a></p>
+            <p class="movie_option"><strong>Источник: </strong><a th:text="${anime.sourceOfAnime}" href="#"></a></p>
+            <p class="movie_option"><strong>Дата выхода: </strong><span th:text="${anime.outdate}"></span></p>
+
+            <p class="movie_option">
+              <strong>Жанры: </strong>
+              <span th:each="genre : ${animeGenres}" th:text="${genre.name}" th:if="${not #lists.isEmpty(animeGenres)}">Genre Name</span>
+              <span th:unless="${not #lists.isEmpty(animeGenres)}">No genres available</span>
+            </p>
+
+            <form action="/anime/addToFavorites" method="post" >
+              <input type="hidden" name="animeId" th:value="${anime.anime_id}">
+              <button  class="redBtn" type="submit">Add to Favorites</button>
+            </form>
+
+          </div>
+          <div class="clearfix"> </div>
+          <p class="m_4">There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don't look even slightly believable. If you are going to use a passage of Lorem Ipsum, you need to be sure there isn't anything embarrassing hidden in the middle of text. All the Lorem Ipsum generators on the Internet tend to repeat predefined chunks as necessary, making this the first true generator on the Internet.</p>
+          <div>
+            <div th:if="${session.user!=null}">
+              <form th:action="'/anime/'+${anime.anime_id}" method="post" class="form-signup" enctype="multipart/form-data">
+                <div class="text-center" style="color:#219321" th:if="${message}" th:text="${message}"></div>
+                <div>
+                  <label for="number">Серия:</label>
+                  <input type="number" name="number" id="number" class="form-control" value="1">
+                  <span th:if="${errors}" th:text="${errors[number]}" class="error"> </span>
+                </div>
+                <div>
+                  <label for="video">Video:</label>
+                  <input type="file" id="video" name="video" awccept="video/*">
+                  <span th:if="${errors}" th:text="${errors[video]}" class="error"> </span>
+                </div>
+                <input type="submit" value="Добавление">
+              </form>
+              <form th:action="'/anime/' + ${anime.anime_id} + '/addGenre'" method="post" class="form-signup">
+                <label for="genreId">Выберите жанр:</label><br>
+                <select name="genreId" id="genreId">
+                  <option th:each="genre : ${genres}" th:value="${genre.genre_id}" th:text="${genre.name}">Выберите жанр</option>
+                </select><br><br>
+                <input type="hidden" name="animeId" th:value="${anime.anime_id}">
+                <input type="submit" value="Добавить жанр">
+              </form>
+            </div>
+            <form th:if="${user}" action="/anime/subscribe" method="post">
+              <input type="hidden" name="anime_id" th:value="${anime.anime_id}">
+              <input type="hidden" name="user_id" th:value="${user.user_id}">
+              <button class="redBtn" type="submit">Подписаться на обновления</button>
+            </form>
+            <div>
+              <div style="display:inline-block;" th:if="${animeseries}" th:each="el: ${animeseries}">
+                <button th:text="${el.number}" class="redBtn" th:attr="data-video='/uploads/'+${el.video}" th:id="'button'+${el.number}" onclick="changeVideoSrc(this)"></button>
+              </div>
+              <video th:if="${animeseries}" id="videoPlayer" width="640" height="360" controls>
+                <source th:src="@{${'/uploads/' + animeseries[0].video}}" type="video/mp4">
+                Ваш браузер не поддерживает видео тег.
+              </video>
+              <div>
+                <button class="redBtn" id="prevVideo" onclick="previous()">Предыдущая серия</button>
+                <button class="redBtn" id="nextVideo" onclick="next()">Следующая серия</button>
+              </div>
+            </div>
+          </div>
+
+<form th:if="${user}" th:action="'/anime/comments/'+ ${anime.anime_id} + '/' +${user.user_id}" method="post">
+            <input type="text" name="comment" placeholder="Введите ваш комментарий" required>
+            <input type="hidden" name="anime_id" th:value="${anime.anime_id}">
+            <input type="hidden" name="user_id" th:value="${user.user_id}">
+            <button type="submit">Отправить комментарий</button>
+          </form>
+          <div th:if="${not #lists.isEmpty(comments)}">
+            <h3>Комментарии:</h3>
+            <ul class="comment-list">
+              <li th:each="comment : ${comments}">
+                <div class="comment">
+                  <strong th:text="${comment.login}"></strong>
+                  <p th:text="${comment.commentText}"></p>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+        <div class="col-md-3">
+          <div class="movie_img"><div class="grid_2">
+            <img src="/images/pic6.jpg" class="img-responsive" alt="">
+            <div class="caption1">
+            </div>
+          </div>
+          </div>
+          <div class="grid_2 col_1">
+            <img src="/images/pic2.jpg" class="img-responsive" alt="">
+            <div class="caption1">
+            </div>
+          </div>
+          <div class="grid_2 col_1">
+            <img src="/images/pic9.jpg" class="img-responsive" alt="">
+            <div class="caption1">
+            </div>
+          </div>
+        </div>
+        <div class="clearfix"> </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="container">
+  <footer th:insert="~{blocks/footer :: footer}">
+  </footer>
+</div>
+</body>
+</html>

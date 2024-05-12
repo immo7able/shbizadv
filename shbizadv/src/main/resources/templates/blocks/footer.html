@@ -1,0 +1,21 @@
+<div th:fragment="footer">
+    <div id="footer-widgets" class="gp-footer-larger-first-col">
+        <div class="gp-container">
+            <div class="footer-widget footer-1">
+                <div class="wpb_wrapper">
+                    <img src="/images/logo.png" alt=""/>
+                </div>
+                <br>
+                <p>ваш идеальный партнер для неограниченного потока развлечений! Мы предлагаем огромную библиотеку аниме, доступную для просмотра в любое время и в любом месте.</p>
+            </div>
+            <div class="footer_box">
+                <div class="col_1_of_3 span_1_of_3">
+                    <h3>Жанры</h3>
+                    <ul class="first">
+                        <li th:each="el:${genres}"><a th:href="'/genre/'+${el.genre_id}" th:text="${el.name}"></a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,170 @@
+@startuml
+interface JpaRepository <<Singleton>>{
+}
+interface AnimeGenreRepository extends JpaRepository{
+    List<AnimeGenre> findByAnimeId(int animeId);
+    List<AnimeGenre> findAllByGenreId(int genreId);
+}
+interface AnimeRepository extends JpaRepository{
+    boolean existsByName(String name);
+    List<Anime> findAllByName(String name);
+}
+interface AnimeSeriesRepository extends JpaRepository{
+    boolean existsByNumberAndAnimeid(int number, int id);
+    List<AnimeSeries> findAllByAnimeidOrderByNumber(int anime_id);
+}
+interface CommentRepository extends JpaRepository{
+    Comment save(Comment comment);
+    List<Comment> findByAnimeId(int animeId);
+    List<Comment> findByAnime_UserId(int userId);
+}
+interface GenreRepository extends JpaRepository{
+}
+interface SubscribeListRepository extends JpaRepository{
+    SubscribeList findByUserAndAnime(User user, Anime anime);
+    ArrayList<SubscribeList> findByAnime(Anime anime);
+}
+interface UserListRepository extends JpaRepository{
+    UserList findByUserAndAnime( User user, Anime anime);
+    List<UserList> findByUserAndListType( User user, String listType);
+}
+interface UserMessagesRepository extends JpaRepository{
+    ArrayList<UserMessages> findByUser(User user);
+}
+interface UserRatingRepository extends JpaRepository{
+    UserRating findByUserAndAnime(User user, Anime anime);
+    List<UserRating> findByAnime(Anime anime);
+}
+interface UserRepository extends JpaRepository{
+    boolean existsByEmail(String email);
+    boolean existsByLogin(String login);
+    User findByLogin(String login);
+    Optional<User> findById(Long id);
+}
+class MainController {
+    -UserService userService;
+    -FavoriteService favoriteService;
+    -AnimeService animeService;
+    -UserRatingService userRatingService;
+    -AnimeGenreService animeGenreService;
+    -GenreService genreService;
+    -CommentService commentService;
+    -AnimeRepository animeRepository;
+    -AnimeRepository animeRepository1;
+    +String getLoginPage(Model model);
+    +String getRegisterPage(Model model);
+    +String createUser(String login, String email, String password, String confirm_password, Model model, RedirectAttributes redirectAttributes);
+    +String login(String login, String password, HttpSession session, Model model);
+    +String userProfile(HttpSession session, Model model);
+    +String logout(HttpSession session);
+    +String rateAnime(int animeId, int userId, int rating);
+    +String getAnimePage(int genreId, Model model);
+    +String saveComment(int userId, int animeId, String commentText, Model model);
+    +String addGenreToAnime(int animeId, int genreId);
+    +String getAnimePage(String search, Model model);
+    +String getMainPage(String search, Model model);
+    +String showAnimePage(int animeId, Model model, HttpSession httpSession);
+    +String addToFavorites(int animeId, HttpSession session, RedirectAttributes redirectAttributes);
+    +String subscribe(int anime_id, int user_id, HttpSession session, RedirectAttributes redirectAttributes);
+    +String addAnimeSeries(int id, int number, MultipartFile video, Model model) throws IOException;
+    +String getAdminPage(HttpSession session, Model model);
+    +String createUser(String name, int seriescount, String status, String studio, String typeofanime, String sourceofanime, MultipartFile avatar, MultipartFile background, Model model) throws IOException;
+    +String addGenre(String name, Model model);
+}
+class AnimeGenreService {
+    -AnimeGenreRepository animeGenreRepository;
+    +AnimeGenre addAnimeGenre(int genreId, Anime anime);
+    +List<Anime> getAnimeByGenre(int genreId);
+}
+class AnimeService{
+    -UserMessagesRepository userMessagesRepository;
+    -AnimeGenreRepository animeGenreRepository;
+    -AnimeRepository animeRepository;
+    -AnimeGenreService animeGenreService;
+    -AnimeSeriesRepository animeSeriesRepository;
+    -SubscribeListRepository subscribeListRepository;
+    -String uploadPath;
+    -static final Pattern ALLOWED_CHARACTERS_PATTERN;
+    +List<AnimeGenreDTO> getGenresForAnime(int animeId);
+    +Map<String, String> validateAnimeData(String name, int seriescount, String status, String studio, String typeofanime, String sourceofanime, MultipartFile avatar, MultipartFile background) throws IOException;
+    +Map<String, String> addAnimeSerie(int id, int number, MultipartFile video) throws IOException;
+    +void subscribeToAnime(User user, Anime anime);
+    +List<AnimeGenreDTO> getGenresForAnime(int animeId);
+    -boolean isAllowedCharacters(String input);
+    +boolean isAnimeExists(int anime_id);
+    +Anime getOneAnime(int anime_id);
+    +List<Anime> getAnime();
+    +List<AnimeSeries> getAllSeries(int anime_id);
+    +List<Anime> getAnimeByName(String name);
+    +void notifySubscribers(int id);
+}
+class CommentService{
+    -static final Logger logger;
+    -CommentRepository commentRepository;
+    +Map<String, String> validateCommentData(String commentText);
+    +Comment addComment(User user_id, Anime anime, String commentText);
+    +List<CommentDTO> getCommentsByAnimeId(int animeId);
+}
+class FavoriteService{
+    -UserListRepository userListRepository;
+    +void addToFavorites(User user, Anime anime);
+    +List<UserList> findFavoritesByUserId(User user_id);
+}
+class GenreService{
+    -GenreRepository genreRepository;
+    -AnimeGenreRepository animeGenreRepository;
+    -AnimeGenreService animeGenreService;
+    +List<AnimeGenreDTO> getGenresForAnime(int animeId);
+    +List<Genre> getAllGenres()
+    +Genre addGenre(String name)
+    +List<AnimeGenreDTO> getGenresForAnime(int animeId)
+    +Genre getGenre(int id)
+    +boolean isGenreExists(int id)
+}
+class UserRatingService{
+    -UserRatingRepository userRatingRepository;
+    -AnimeRepository animeRepository;
+    +boolean rateAnime(User user, Anime anime, int rating)
+    -void updateAnimeRating(Anime anime)
+    -double calculateAverageRating(Anime anime)
+    +Integer getUserRatingForAnime(User userId, Anime animeId)
+}
+class UserService{
+    -UserRepository userRepository;
+    -UserMessagesRepository userMessagesRepository;
+    -static final String EMAIL_PATTERN;
+    -static final Pattern ALLOWED_CHARACTERS_PATTERN;
+    +Map<String, String> validateUserData(String login, String email, String password, String confirmPassword)
+    -boolean isAllowedCharacters(String input)
+    +boolean authenticate(String login, String password)
+    +User getUser(String login)
+    +void updateUserRanking(User user, List<UserList> favorites)
+    -String calculateUserRanking(List<UserList> favorites)
+    +User getUserById(long userId)
+    +List<UserMessages> findMessagesByUser(User user)
+}
+UserService --> UserRepository
+UserService --> UserMessagesRepository
+UserRatingService --> UserRatingRepository
+UserRatingService --> AnimeRepository
+GenreService --> GenreRepository
+GenreService --> AnimeGenreRepository
+FavoriteService --> UserListRepository
+CommentService --> CommentRepository
+AnimeService --> AnimeRepository
+AnimeService --> AnimeSeriesRepository
+AnimeService --> SubscribeListRepository
+AnimeService --> UserMessagesRepository
+AnimeService --> AnimeGenreRepository
+AnimeService *-> SubscribeList
+AnimeGenreService --> AnimeGenreRepository
+MainController --> AnimeGenreService
+MainController --> AnimeService
+MainController --> CommentService
+MainController --> FavoriteService
+MainController --> GenreService
+MainController --> UserRatingService
+MainController --> UserService
+
+JpaRepository --> JpaRepository
+@enduml
