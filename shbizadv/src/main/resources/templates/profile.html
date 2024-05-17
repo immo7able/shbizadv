@@ -23,6 +23,10 @@
     <div class="info">
       <h2 th:text="${user.login}"></h2>
       <p th:text = "${user.ranking}"/>
+      <form th:action="@{/comment}" method="get">
+        <input type="hidden" name="user_id" th:value="${user.user_id}">
+        <button type="submit">Посмотреть комментарии</button>
+      </form>
     </div>
   </section>
   <section class="manga-list">

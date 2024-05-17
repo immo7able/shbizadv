@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Bizarre Adventure</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="keywords" content="Movie_store Responsive web template, Bootstrap Web Templates, Flat Web Templates, Andriod Compatible web template,
+    Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, SonyErricsson, Motorola web design" />
+    <script type="application/x-javascript"> addEventListener("load", function() { setTimeout(hideURLbar, 0); }, false); function hideURLbar(){ window.scrollTo(0,1); } </script>
+    <link href="css/bootstrap.css" rel='stylesheet' type='text/css' />
+    <link href="css/style.css" rel="stylesheet" type="text/css" media="all" />
+    <script type="text/javascript" src="js/jquery-1.11.1.min.js"></script>
+    <link href='http://fonts.googleapis.com/css?family=Roboto+Condensed:100,200,300,400,500,600,700,800,900' rel='stylesheet' type='text/css'>
+</head>
+<body>
+<header th:insert="~{blocks/header :: header}"></header>
+
+<!-- Admin Comments Management -->
+<div th:if="${session.user.role == 'admin'}" class="manga-list">
+    <h1>Управление комментариями</h1>
+    <div th:if="${message}" class="alert alert-success" th:text="${message}"></div>
+    <table class="table">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Пользователь</th>
+            <th>Комментарий</th>
+            <th>Статус</th>
+            <th>Действия</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="comment : ${pendingComments}">
+            <td th:text="${comment.animecomment_id}"></td>
+            <td th:text="${comment.user.login}"></td>
+            <td th:text="${comment.comment}"></td>
+            <td th:text="${comment.status}"></td>
+            <td>
+                <form th:action="@{/comment/approve}" method="post" style="display: inline;">
+                    <input type="hidden" name="commentId" th:value="${comment.animecomment_id}">
+                    <input type="hidden" name="user_id" th:value="${session.user.user_id}">
+                    <button type="submit" class="btn btn-success">Одобрить</button>
+                </form>
+                <form th:action="@{/comment/reject}" method="post" style="display: inline;">
+                    <input type="hidden" name="commentId" th:value="${comment.animecomment_id}">
+                    <input type="hidden" name="user_id" th:value="${session.user.user_id}">
+                    <button type="submit" class="btn btn-warning">Отклонить</button>
+                </form>
+                <form th:action="@{/comment/delete}" method="post" style="display: inline;">
+                    <input type="hidden" name="commentId" th:value="${comment.animecomment_id}">
+                    <input type="hidden" name="user_id" th:value="${session.user.user_id}">
+                    <button type="submit" class="btn btn-danger">Удалить</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <h2>Одобренные комментарии</h2>
+    <table class="table">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Пользователь</th>
+            <th>Комментарий</th>
+            <th>Статус</th>
+            <th>Действия</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="comment : ${approvedComments}">
+            <td th:text="${comment.animecomment_id}"></td>
+            <td th:text="${comment.user.login}"></td>
+            <td th:text="${comment.comment}"></td>
+            <td th:text="${comment.status}"></td>
+            <td>
+                <form th:action="@{/comment/delete}" method="post" style="display: inline;">
+                    <input type="hidden" name="user_id" th:value="${session.user.user_id}">
+                    <input type="hidden" name="commentId" th:value="${comment.animecomment_id}">
+                    <button type="submit" class="btn btn-danger">Удалить</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <h2>Отклоненные комментарии</h2>
+    <table class="table">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Пользователь</th>
+            <th>Комментарий</th>
+            <th>Статус</th>
+            <th>Действия</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="comment : ${rejectedComments}">
+            <td th:text="${comment.animecomment_id}"></td>
+            <td th:text="${comment.user.login}"></td>
+            <td th:text="${comment.comment}"></td>
+            <td th:text="${comment.status}"></td>
+            <td>
+                <form th:action="@{/comment/delete}" method="post" style="display: inline;">
+                    <input type="hidden" name="user_id" th:value="${session.user.user_id}">
+                    <input type="hidden" name="commentId" th:value="${comment.animecomment_id}">
+                    <button type="submit" class="btn btn-danger">Удалить</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- User Comments Management -->
+<div th:if="${session.user.role == 'user'}" class="manga-list">
+    <h1>Ваши комментарии</h1>
+    <table class="table">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Комментарий</th>
+            <th>Статус</th>
+            <th>Действия</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="comment : ${userComments}">
+            <td th:text="${comment.animecomment_id}"></td>
+            <td th:text="${comment.comment}"></td>
+            <td th:text="${comment.status}"></td>
+            <td>
+                <a th:href="@{/anime/{id}(id=${comment.anime.anime_id})}" class="btn btn-info">Перейти к аниме</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<footer th:insert="~{blocks/footer :: footer}">
+</footer>
+</body>
+</html>

@@ -100,11 +100,15 @@ public class UserService {
         }
     }
 
-    public User getUserById(long userId) {
+    public User getUserById(int userId) {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("No user found with ID " + userId));
     }
 
+
+    public User findByLogin(String login) {
+        return userRepository.findByLogin(login);
+    }
     public List<UserMessages> findMessagesByUser(User user) {
         return userMessagesRepository.findByUser(user);
     }

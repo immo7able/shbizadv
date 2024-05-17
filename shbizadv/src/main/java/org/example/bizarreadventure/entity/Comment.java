@@ -3,6 +3,8 @@ package org.example.bizarreadventure.entity;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import org.antlr.v4.runtime.misc.NotNull;
+import org.example.bizarreadventure.com.CommentState;
+import org.example.bizarreadventure.com.CommentStatus;
 
 @Entity
 @Table(name = "animecomment")
@@ -22,6 +24,24 @@ public class Comment {
     @JoinColumn(name = "anime_id")
     private Anime anime;
 
+    @Enumerated(EnumType.STRING)
+    private CommentStatus status;
+
+    @Transient
+    private CommentState state;
+
+    public void setState(CommentState state) {
+        this.state = state;
+        this.state.handle(this);
+    }
+
+    public CommentStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(CommentStatus status) {
+        this.status = status;
+    }
     public int getAnimecomment_id() {
         return animecomment_id;
     }

@@ -1,9 +1,7 @@
 package org.example.bizarreadventure.service;
 
-import org.example.bizarreadventure.entity.Anime;
-import org.example.bizarreadventure.entity.Comment;
-import org.example.bizarreadventure.entity.CommentDTO;
-import org.example.bizarreadventure.entity.User;
+import org.example.bizarreadventure.com.CommentStatus;
+import org.example.bizarreadventure.entity.*;
 import org.example.bizarreadventure.repository.CommentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -34,15 +32,65 @@ public class CommentService {
         comment.setUser(user_id);
         comment.setAnime(anime);
         comment.setComment(commentText);
+        comment.setState(new PendingState());
         return commentRepository.save(comment);
     }
-    public List<CommentDTO> getCommentsByAnimeId(int animeId) {
-        List<Comment> comments = commentRepository.findByAnimeId(animeId);
-        List<CommentDTO> commentDTOs = comments.stream()
-                .map(comment -> new CommentDTO(comment.getUser().getLogin(), comment.getComment()))
-                .collect(Collectors.toList());
-        logger.info("Loaded comments: {}", commentDTOs);
-        return commentDTOs;
+    public void approveComment(int commentId) {
+        Comment comment = commentRepository.findById(commentId).orElse(null);
+        if (comment != null) {
+            comment.setState(new ApprovedState());
+            commentRepository.save(comment);
+        }
     }
 
+    public void rejectComment(int commentId) {
+        Comment comment = commentRepository.findById(commentId).orElse(null);
+        if (comment != null) {
+            comment.setState(new RejectedState());
+            commentRepository.save(comment);
+        }
+    }
+
+    public void deleteComment(int commentId) {
+        commentRepository.deleteById(commentId);
+    }
+
+    public List<CommentDTO> getCommentsByAnimeId(int animeId) {
+        List<Comment> comments = commentRepository.findByAnimeId(animeId);
+        return comments.stream()
+                .map(comment -> new CommentDTO(comment.getUser().getLogin(), comment.getComment(), comment.getStatus()))
+                .collect(Collectors.toList());
+    }
+
+    public List<Comment> getCommentsByStatus(CommentStatus status) {
+        return commentRepository.findByStatus(status);
+    }
+
+    public List<Comment> findPendingComments() {
+        return commentRepository.findPendingComments();
+    }
+
+    public List<Comment> findApprovedComments() {
+        return commentRepository.findApprovedComments();
+    }
+
+    public List<Comment> findRejectedComments() {
+        return commentRepository.findRejectedComments();
+    }
+
+    public List<Comment> findCommentsByUser(User userId) {
+        return commentRepository.findByAnime_UserId(userId);
+    }
+
+    public List<Comment> findPendingCommentsByUser(int userId) {
+        return commentRepository.findPendingCommentsByUser(userId);
+    }
+
+    public List<Comment> findApprovedCommentsByUser(int userId) {
+        return commentRepository.findApprovedCommentsByUser(userId);
+    }
+
+    public List<Comment> findRejectedCommentsByUser(int userId) {
+        return commentRepository.findRejectedCommentsByUser(userId);
+    }
 }

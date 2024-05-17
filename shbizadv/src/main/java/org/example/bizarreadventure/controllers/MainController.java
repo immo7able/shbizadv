@@ -1,6 +1,7 @@
 package org.example.bizarreadventure.controllers;
 
 import jakarta.servlet.http.HttpSession;
+import org.example.bizarreadventure.com.CommentStatus;
 import org.example.bizarreadventure.entity.*;
 import org.example.bizarreadventure.repository.AnimeRepository;
 import org.example.bizarreadventure.service.*;
@@ -15,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -109,7 +111,7 @@ public class MainController {
     //User rating controller start
     @PostMapping("/anime/rating")
     public String rateAnime(@RequestParam("animeId") int animeId,
-                            @RequestParam("userId") Long userId,
+                            @RequestParam("userId") int userId,
                             @RequestParam("rating") int rating,
                             RedirectAttributes redirectAttrs) {
         Anime anime = animeService.getOneAnime(animeId);
@@ -183,6 +185,44 @@ public class MainController {
             return "redirect:/anime/" + animeId + "?error=unexpectedError";
         }
     }
+
+    @PostMapping("/comment/approve")
+    public String approveComment(@RequestParam("commentId") int commentId, RedirectAttributes redirectAttributes) {
+        commentService.approveComment(commentId);
+        redirectAttributes.addFlashAttribute("message", "Комментарий одобрен.");
+        return "redirect:/comment";
+    }
+
+    @PostMapping("/comment/reject")
+    public String rejectComment(@RequestParam("commentId") int commentId, RedirectAttributes redirectAttributes) {
+        commentService.rejectComment(commentId);
+        redirectAttributes.addFlashAttribute("message", "Комментарий отклонен.");
+        return "redirect:/comment";
+    }
+
+    @PostMapping("/comment/delete")
+    public String deleteComment(@RequestParam("commentId") int commentId, RedirectAttributes redirectAttributes) {
+        commentService.deleteComment(commentId);
+        redirectAttributes.addFlashAttribute("message", "Комментарий удален.");
+        return "redirect:/comment";
+    }
+
+    @GetMapping("/comment")
+    public String showComments(HttpSession session, Model model) {
+        User user = (User) session.getAttribute("user");
+        if (user == null) {
+            return "redirect:/login";
+        }
+        if ("admin".equals(user.getRole())) {
+            model.addAttribute("pendingComments", commentService.findPendingComments());
+            model.addAttribute("approvedComments", commentService.findApprovedComments());
+            model.addAttribute("rejectedComments", commentService.findRejectedComments());
+        } else {
+            model.addAttribute("userComments", commentService.findCommentsByUser(user));
+        }
+        return "comment";
+    }
+
     //Comment controller end
 
     //Anime genre controller start
