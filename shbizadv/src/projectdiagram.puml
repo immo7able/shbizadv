@@ -143,21 +143,94 @@ class UserService{
     +User getUserById(long userId)
     +List<UserMessages> findMessagesByUser(User user)
 }
-UserService --> UserRepository
-UserService --> UserMessagesRepository
-UserRatingService --> UserRatingRepository
-UserRatingService --> AnimeRepository
-GenreService --> GenreRepository
-GenreService --> AnimeGenreRepository
-FavoriteService --> UserListRepository
-CommentService --> CommentRepository
-AnimeService --> AnimeRepository
-AnimeService --> AnimeSeriesRepository
-AnimeService --> SubscribeListRepository
-AnimeService --> UserMessagesRepository
-AnimeService --> AnimeGenreRepository
-AnimeService *-> SubscribeList
-AnimeGenreService --> AnimeGenreRepository
+class Comment {
+    -int animecomment_id;
+    -User user;
+    -String comment;
+    -Anime anime;
+    -CommentStatus status;
+    -CommentState state;
+}
+interface CommentState {
+    void handle(Comment comment);
+}
+class PendingState implements CommentState {
+    +void handle(Comment comment)
+}
+class ApprovedState implements CommentState {
+    +void handle(Comment comment)
+}
+class RejectedState implements CommentState {
+    +void handle(Comment comment)
+}
+class Anime {
+    -int anime_id;
+    -String name;
+    -int seriescount;
+    -String status;
+    -String studio;
+    -String typeofanime;
+    -String sourceofanime;
+    -String avatar;
+    -String background;
+    -double rating;
+    -int views;
+    -Date outdate;
+}
+class AnimeGenre {
+    -int animegenre_id;
+    -Anime anime;
+    -Genre genre;
+}
+class AnimeSeries {
+    -int animeseries_id;
+    -int animeid;
+    -int number;
+    -String video;
+}
+class Genre{
+    -int genre_id;
+    -String name;
+}
+class SubscribeList {
+    -int subscribe_id;
+    -User user;
+    -Anime anime;
+}
+class User {
+    -int user_id;
+    -String login;
+    -String password;
+    -String email;
+    -String ranking;
+    -Date reg_date;
+    -String role;
+}
+class UserList {
+    -int userlistId;
+    -User user_id;
+    -Anime anime;
+    -String listType;
+}
+class UserMessages {
+    -int subscribe_id;
+    -User user;
+    -String message;
+}
+class UserRating {
+    -int userrating_id;
+    -User user;
+    -Anime anime;
+    -int rating;
+}
+class AnimeGenreDTO {
+    -String name;
+}
+class CommentDTO {
+    -String login;
+    -String commentText;
+    -CommentStatus status;
+}
 MainController --> AnimeGenreService
 MainController --> AnimeService
 MainController --> CommentService
@@ -165,6 +238,41 @@ MainController --> FavoriteService
 MainController --> GenreService
 MainController --> UserRatingService
 MainController --> UserService
-
+CommentService --> CommentRepository
+UserService --> UserRepository
+UserService --> UserMessagesRepository
+UserRatingService --> UserRatingRepository
+UserRatingService --> AnimeRepository
+GenreService --> GenreRepository
+GenreService --> AnimeGenreRepository
+FavoriteService --> UserListRepository
+AnimeService *-> SubscribeList
+AnimeService --> AnimeRepository
+AnimeService --> AnimeSeriesRepository
+AnimeService --> SubscribeListRepository
+AnimeService --> UserMessagesRepository
+AnimeService --> AnimeGenreRepository
+AnimeGenreService --> AnimeGenreRepository
 JpaRepository --> JpaRepository
+AnimeGenreRepository --> AnimeGenre
+CommentRepository --> Comment
+UserRepository --> User
+UserMessagesRepository --> UserMessages
+UserRatingRepository --> UserRating
+UserListRepository --> UserList
+SubscribeListRepository --> SubscribeList
+GenreRepository --> Genre
+AnimeRepository --> Anime
+AnimeSeriesRepository --> AnimeSeries
+Comment o-> CommentState
+UserRating o-> Anime
+UserList o-> Anime
+AnimeGenre o-> Anime
+AnimeGenre o-> Genre
+UserMessages o-> User
+UserRating o-> User
+UserList o-> User
+Comment o-> User
+Comment o-> Anime
+
 @enduml

@@ -7,10 +7,10 @@ import jakarta.persistence.*;
 public class AnimeSeries {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    int animeseries_id;
-    int animeid;
-    int number;
-    String video;
+    private int animeseries_id;
+    private int animeid;
+    private int number;
+    private String video;
 
     public int getAnimeseries_id() {
         return animeseries_id;

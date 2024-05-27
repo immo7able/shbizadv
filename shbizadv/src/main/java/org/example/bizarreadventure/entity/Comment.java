@@ -29,6 +29,10 @@ public class Comment {
 
     @Transient
     private CommentState state;
+    public Comment(){
+        this.state= new PendingState();
+        state.handle(this);
+    }
 
     public void setState(CommentState state) {
         this.state = state;
